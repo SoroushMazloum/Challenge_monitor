@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "qdir": "cpp",
+        "qtgui": "cpp"
+    }
+}
