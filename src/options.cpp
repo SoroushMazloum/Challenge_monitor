@@ -74,12 +74,12 @@ const double Options::PITCH_WIDTH = 68.0;
 const double Options::PITCH_HALF_LENGTH = Options::PITCH_LENGTH * 0.5;
 const double Options::PITCH_HALF_WIDTH = Options::PITCH_WIDTH * 0.5;
 const double Options::PITCH_MARGIN = 5.0;
-const double Options::CENTER_CIRCLE_R = 9.15;
+const double Options::CENTER_CIRCLE_R = 4.5;
 const double Options::PENALTY_AREA_LENGTH = 16.5;
 const double Options::PENALTY_AREA_WIDTH = 40.32;
 const double Options::PENALTY_CIRCLE_R = 9.15;
 const double Options::PENALTY_SPOT_DIST = 11.0;
-const double Options::GOAL_WIDTH = 30;
+const double Options::GOAL_WIDTH = 14.02;
 const double Options::GOAL_HALF_WIDTH = Options::GOAL_WIDTH * 0.5;
 const double Options::GOAL_AREA_LENGTH = 5.5;
 const double Options::GOAL_AREA_WIDTH = 18.32;
@@ -95,8 +95,8 @@ const int Options::DEFAULT_TIMER_INTERVAL = 100;
 //const int Options::WAITING_ANIMATION_SIZE = 64;
 const int Options::WAITING_ANIMATION_SIZE = 96;
 
-const QColor Options::FIELD_COLOR( 31, 160, 31 );
-const QColor Options::LINE_COLOR( 255, 255, 255 );
+const QColor Options::FIELD_COLOR( 255, 255, 255 );
+const QColor Options::LINE_COLOR( 0, 0, 0 );
 const QColor Options::MEASURE_LINE_COLOR( 0, 255, 255 );
 const QColor Options::MEASURE_MARK_COLOR( 255, 0, 0 );
 const QColor Options::MEASURE_FONT_COLOR( 255, 191, 191 );
@@ -257,7 +257,7 @@ Options::Options()
     M_show_grid_coord( false ),
     M_team_graphic_scale( 1.0 ),
     // zoom
-    M_field_scale( 1.0 ),
+    M_field_scale( 30.0 ),
     M_zoomed( false ),
     M_field_center( 0, 0 ),
     M_focus_type( FOCUS_POINT ),
@@ -278,17 +278,17 @@ Options::Options()
       //
     M_ball_pen( BALL_COLOR, 0, Qt::SolidLine ),
     M_ball_brush( BALL_COLOR, Qt::SolidPattern ),
-    M_ball_vel_pen( BALL_VEL_COLOR, 0, Qt::SolidLine ),
+    M_ball_vel_pen( BALL_VEL_COLOR, 0, Qt::DotLine ),
       //
     M_player_pen( PLAYER_PEN_COLOR, 0, Qt::SolidLine ),
     M_selected_player_pen( PLAYER_PEN_COLOR, 2, Qt::SolidLine ),
     M_left_team_pen( LEFT_TEAM_COLOR, 0, Qt::SolidLine ),
-    M_left_team_brush( LEFT_TEAM_COLOR, Qt::SolidPattern ),
+    M_left_team_brush( LEFT_TEAM_COLOR, Qt::Dense1Pattern ),
     M_left_goalie_pen( LEFT_GOALIE_COLOR, 0, Qt::SolidLine ),
     M_left_goalie_stretch_pen( LEFT_GOALIE_COLOR.darker( 200 ), 0, Qt::DotLine ),
-    M_left_goalie_brush( LEFT_GOALIE_COLOR, Qt::SolidPattern ),
+    M_left_goalie_brush( LEFT_GOALIE_COLOR, Qt::Dense3Pattern ),
     M_right_team_pen( RIGHT_TEAM_COLOR, 0, Qt::SolidLine ),
-    M_right_team_brush( RIGHT_TEAM_COLOR, Qt::SolidPattern ),
+    M_right_team_brush( RIGHT_TEAM_COLOR, Qt::FDiagPattern ),
     M_right_goalie_pen( RIGHT_GOALIE_COLOR, 0, Qt::SolidLine ),
     M_right_goalie_stretch_pen( RIGHT_GOALIE_COLOR.darker( 200 ), 0, Qt::DotLine ),
     M_right_goalie_brush( RIGHT_GOALIE_COLOR, Qt::SolidPattern ),
@@ -528,10 +528,10 @@ Options::readSettings()
     // field
 
     val = settings.value( "field_brush" );
-    if ( val.isValid() ) M_field_brush.setColor( val.toString() );
+    if ( val.isValid() ) M_field_brush.setColor( QColor().cyan() );
 
     val = settings.value( "line_pen" );
-    if ( val.isValid() ) M_line_pen.setColor( val.toString() );
+    if ( val.isValid() ) M_line_pen.setColor( QColor().yellow() );
 
 
     val = settings.value( "measure_line_pen" );
@@ -557,13 +557,13 @@ Options::readSettings()
     // ball
 
     val = settings.value( "ball_pen" );
-    if ( val.isValid() ) M_ball_pen.setColor( val.toString() );
+    if ( val.isValid() ) M_ball_pen.setColor(  QColor().black()  );
 
     val = settings.value( "ball_vel_pen" );
-    if ( val.isValid() ) M_ball_vel_pen.setColor( val.toString() );
+    if ( val.isValid() ) M_ball_vel_pen.setColor( QColor().black()  );
 
     val = settings.value( "ball_brush" );
-    if ( val.isValid() ) M_ball_brush.setColor( val.toString() );
+    if ( val.isValid() ) M_ball_brush.setColor( QColor().black() );
 
     // player
 
@@ -1500,7 +1500,7 @@ Options::setFieldScale( const double & value )
 {
     if ( std::fabs( M_field_scale - value ) > 0.01 )
     {
-        M_field_scale = std::max( MIN_FIELD_SCALE, std::min( value, MAX_FIELD_SCALE ) );
+        M_field_scale = 30.0;//std::max( MIN_FIELD_SCALE, std::min( value, MAX_FIELD_SCALE ) );
         M_zoomed = true;
     }
 }
@@ -1591,7 +1591,7 @@ Options::updateFieldSize( const int canvas_width,
                                      //+ 1.0
                                      );
 
-            M_field_scale = static_cast< double >( canvas_width ) / total_pitch_l;
+            M_field_scale = 30.0;//static_cast< double >( canvas_width ) / total_pitch_l;
 
             int field_height = canvas_height;
             if ( showTeamGraphic() )
@@ -1606,7 +1606,7 @@ Options::updateFieldSize( const int canvas_width,
             // automatically adjust a field scale
             if ( total_pitch_w * fieldScale() > field_height )
             {
-                M_field_scale = static_cast< double >( field_height ) / total_pitch_w;
+                M_field_scale = 30.0;//static_cast< double >( field_height ) / total_pitch_w;
             }
 
             // check the scale threshold

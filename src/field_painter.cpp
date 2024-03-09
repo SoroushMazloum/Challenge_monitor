@@ -82,9 +82,9 @@ FieldPainter::draw( QPainter & painter )
 
     drawBackGround( painter );
     drawLines( painter );
-    drawPenaltyAreaLines( painter );
-    drawGoalAreaLines( painter );
-    drawGoals( painter );
+    //drawPenaltyAreaLines( painter );
+    //drawGoalAreaLines( painter );
+    //drawGoals( painter );
     if ( Options::instance().showFlag() )
     {
         drawFlags( painter );
@@ -109,7 +109,7 @@ FieldPainter::drawBackGround( QPainter & painter ) const
 {
     // fill the whole region
     painter.fillRect( painter.window(),
-                      Options::instance().fieldBrush() );
+                      Qt::cyan/*Options::instance().fieldBrush()*/ );
 }
 
 /*-------------------------------------------------------------------*/
@@ -124,20 +124,26 @@ FieldPainter::drawLines( QPainter & painter ) const
 
     // set paint styles
     painter.setPen( opt.linePen() );
-    painter.setBrush( Qt::NoBrush );
+    painter.setBrush( Qt::magenta );
 
     // set screen coordinates of field
-    int left_x   = opt.screenX( - Options::PITCH_HALF_LENGTH );
-    int right_x  = opt.screenX( + Options::PITCH_HALF_LENGTH );
-    int top_y    = opt.screenY( - Options::PITCH_HALF_WIDTH );
-    int bottom_y = opt.screenY( + Options::PITCH_HALF_WIDTH );
+    int left_x   = opt.screenX( - Options::PITCH_HALF_LENGTH + 30 );
+    int right_x  = opt.screenX( + Options::PITCH_HALF_LENGTH - 30);
+    int top_y    = opt.screenY( - Options::PITCH_HALF_WIDTH + 20 );
+    int bottom_y = opt.screenY( + Options::PITCH_HALF_WIDTH - 20);
 
+
+    painter.setPen( opt.linePen() );
+    painter.setBrush( Qt::blue );
     // side lines & goal lines
     painter.drawLine( left_x, top_y, right_x, top_y );
     painter.drawLine( right_x, top_y, right_x, bottom_y );
     painter.drawLine( right_x, bottom_y, left_x, bottom_y );
     painter.drawLine( left_x, bottom_y, left_x, top_y );
 
+
+    painter.setPen( opt.linePen() );
+    painter.setBrush( Qt::white );
     if ( SP.keepaway_mode_
          || opt.showKeepawayArea() )
     {
@@ -161,19 +167,71 @@ FieldPainter::drawLines( QPainter & painter ) const
                              opt.fieldCenter().y() - center_radius,
                              center_radius * 2,
                              center_radius * 2 );
+
     }
 
-    // corner arc
-    {
-        int r = opt.scale( Options::CORNER_ARC_R );
+    painter.setPen( opt.linePen() );
+    painter.setBrush( Qt::blue );
 
-        painter.drawArc( left_x - r, top_y - r, r * 2, r * 2,
-                         -90*16, 90*16 );
-        painter.drawArc( left_x - r, bottom_y - r, r * 2, r * 2,
+    int leftcir = opt.scale( 7.0 );
+
+    int leftcirx   = opt.screenX( - Options::PITCH_HALF_LENGTH + 30 - leftcir);
+
+    int leftciry   = opt.screenY( - leftcir );
+    //painter.drawArc();
+    // corner arc
+    //painter.drawEllipse(leftcirx,leftciry,leftcir * 2, leftcir * 2 );
+    {
+        int r = opt.scale( 9.0 );
+        int zero = opt.screenY( 0.0 );
+        left_x   = opt.screenX( - Options::PITCH_HALF_LENGTH + 30.0 );
+
+        painter.setPen(Qt::NoPen);
+        painter.setBrush(Qt::white);
+        painter.drawPie(left_x - r, zero - r , r * 2, r * 2,-90*16, 90*16 );
+        painter.drawPie( left_x - r, zero - r , r * 2, r * 2,
                          0*16, 90*16 );
-        painter.drawArc( right_x - r, bottom_y - r, r * 2, r * 2,
+
+        painter.drawPie( right_x - r, zero - r , r * 2, r * 2,
                          90*16, 90*16 );
-        painter.drawArc( right_x - r, top_y - r, r * 2, r * 2,
+
+        painter.drawPie( right_x - r, zero - r, r * 2, r * 2,
+                         180*16, 90*16 );
+        
+        painter.setPen(opt.linePen());
+        painter.drawArc( left_x - r, zero - r , r * 2, r * 2,
+                         -90*16, 90*16 );
+        painter.drawArc( left_x - r, zero - r , r * 2, r * 2,
+                         0*16, 90*16 );
+        painter.drawArc( right_x - r, zero - r , r * 2, r * 2,
+                         90*16, 90*16 );
+        painter.drawArc( right_x - r, zero - r, r * 2, r * 2,
+                         180*16, 90*16 );
+
+        r = opt.scale( 3.0 );
+
+        //inside
+
+        painter.setPen(Qt::NoPen);
+        painter.setBrush(Qt::darkCyan);
+        painter.drawPie(left_x - r, zero - r , r * 2, r * 2,-90*16, 90*16 );
+        painter.drawPie( left_x - r, zero - r , r * 2, r * 2,
+                         0*16, 90*16 );
+
+        painter.drawPie( right_x - r, zero - r , r * 2, r * 2,
+                         90*16, 90*16 );
+
+        painter.drawPie( right_x - r, zero - r, r * 2, r * 2,
+                         180*16, 90*16 );
+        
+        painter.setPen(opt.linePen());
+        painter.drawArc( left_x - r, zero - r , r * 2, r * 2,
+                         -90*16, 90*16 );
+        painter.drawArc( left_x - r, zero - r , r * 2, r * 2,
+                         0*16, 90*16 );
+        painter.drawArc( right_x - r, zero - r , r * 2, r * 2,
+                         90*16, 90*16 );
+        painter.drawArc( right_x - r, zero - r, r * 2, r * 2,
                          180*16, 90*16 );
     }
 }
@@ -285,8 +343,8 @@ FieldPainter::drawGoals( QPainter & painter ) const
     const Options & opt = Options::instance();
 
     // set gdi objects
-    painter.setPen( Qt::black );
-    painter.setBrush( Qt::black );
+    painter.setPen( Qt::darkYellow );
+    painter.setBrush( Qt::darkYellow );
 
     // set coordinates param
     int goal_top_y = opt.screenY( - Options::GOAL_WIDTH*0.5 );
@@ -298,13 +356,13 @@ FieldPainter::drawGoals( QPainter & painter ) const
     int post_diameter = opt.scale( Options::GOAL_POST_RADIUS*2.0 );
 
     // left goal
-    painter.drawRect( opt.screenX( - Options::PITCH_HALF_LENGTH - Options::GOAL_DEPTH ) - 1,
+    painter.drawRect( opt.screenX( -22.5 - Options::GOAL_DEPTH ) - 1,
                       goal_top_y,
                       goal_size_x,
                       goal_size_y );
     if ( post_diameter >= 1 )
     {
-        int post_x = opt.screenX( - Options::PITCH_HALF_LENGTH );
+        int post_x = opt.screenX( -22.5 );
         painter.drawEllipse( post_x,
                              post_top_y,
                              post_diameter,
@@ -315,13 +373,13 @@ FieldPainter::drawGoals( QPainter & painter ) const
                              post_diameter );
     }
     // right goal
-    painter.drawRect( opt.screenX( Options::PITCH_HALF_LENGTH ) + 1,
+    painter.drawRect( opt.screenX( 22.5 ) + 1,
                       goal_top_y,
                       goal_size_x,
                       goal_size_y );
     if ( post_diameter >= 1 )
     {
-        int post_x = opt.screenX( Options::PITCH_HALF_LENGTH - Options::GOAL_POST_RADIUS*2.0 );
+        int post_x = opt.screenX( 22.5 - Options::GOAL_POST_RADIUS*2.0 );
         painter.drawEllipse( post_x,
                              post_top_y,
                              post_diameter,
